@@ -1,1 +1,1 @@
-# go-tpc
+# Golang two phase commit
