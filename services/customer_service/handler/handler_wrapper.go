@@ -16,20 +16,27 @@ func HandlerWrapper(hf HandlerFn) http.HandlerFunc {
 		if err != nil {
 			switch err {
 			case entities.ParamInvalid:
-				http.Error(w, err.Error(), http.StatusBadRequest)
-				return
+				JSONError(w, err, http.StatusBadRequest)
 			case entities.MethodNotAllowErr:
-				http.Error(w, err.Error(), http.StatusMethodNotAllowed)
+				JSONError(w, err, http.StatusMethodNotAllowed)
 			default:
-				http.Error(w, err.Error(), http.StatusInternalServerError)
-				return
+				JSONError(w, err, http.StatusInternalServerError)
 			}
+			return
 		}
 		d, err := json.Marshal(obj)
 		if err != nil {
-			http.Error(w, err.Error(), http.StatusInternalServerError)
+			JSONError(w, err, http.StatusInternalServerError)
+			return
 		}
 		w.Header().Add("Content-Type", "application/json")
-		w.Write(d)
+		_, _ = w.Write(d)
 	}
+}
+
+func JSONError(w http.ResponseWriter, err interface{}, code int) {
+	w.Header().Set("Content-Type", "application/json; charset=utf-8")
+	w.Header().Set("X-Content-Type-Options", "nosniff")
+	w.WriteHeader(code)
+	_ = json.NewEncoder(w).Encode(err)
 }

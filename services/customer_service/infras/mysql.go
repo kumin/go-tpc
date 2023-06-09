@@ -4,6 +4,7 @@ import (
 	"log"
 	"time"
 
+	"github.com/kumin/go-tpc/pkg/envx"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 )
@@ -35,7 +36,8 @@ func MysqlConnectionBuilder(fns ...optionFn) *MysqlConnector {
 
 func NewMysqlConnector() *MysqlConnector {
 	return MysqlConnectionBuilder(
-		WithDSN("root:root@tcp(localhost:3306)/hiennhu?charset=utf8&parseTime=True&loc=Local&multiStatements=true"),
+		WithDSN(envx.GetString("MYSQL_ADDRS",
+			"root@tcp(localhost:3306)/kumin_store?charset=utf8&parseTime=True&loc=Local&multiStatements=true")),
 		WithMaxConn(2),
 		WithLifetime(1*time.Minute),
 	)

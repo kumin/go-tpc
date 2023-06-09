@@ -1,4 +1,4 @@
-module github.com/kumin/go-tcp
+module github.com/kumin/go-tpc
 
 go 1.18
 

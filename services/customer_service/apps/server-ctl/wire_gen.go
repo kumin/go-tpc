@@ -24,7 +24,10 @@ func BuildServer() (*HttpServer, error) {
 	productMysqlRepo := mysql.NewProductMysqlRepo(mysqlConnector)
 	productCtlServices := services.NewProductCtlServices(productMysqlRepo)
 	productCtlHandler := handler.NewProductCtlHandler(productCtlServices)
-	httpServer := NewHttpServer(serverConfiguration, productCtlHandler)
+	orderMysqlRepo := mysql.NewOrderMysqlRepo(mysqlConnector)
+	orderService := services.NewOrderService(orderMysqlRepo)
+	orderCtlHandler := handler.NewOrderCtlHandler(orderService)
+	httpServer := NewHttpServer(serverConfiguration, productCtlHandler, orderCtlHandler)
 	return httpServer, nil
 }
 

@@ -18,6 +18,7 @@ type HttpServer struct {
 func NewHttpServer(
 	configs *configs.ServerConfiguration,
 	prodHandler *handler.ProductCtlHandler,
+	orderHandler *handler.OrderCtlHandler,
 ) *HttpServer {
 	server := &HttpServer{
 		port:   configs.Port,
@@ -26,12 +27,14 @@ func NewHttpServer(
 	server.RegisterHandler("/v1/product/add", handler.HandlerWrapper(prodHandler.AddProduct))
 	server.RegisterHandler("/v1/product/listing", handler.HandlerWrapper(prodHandler.ListProducts))
 	server.RegisterHandler("/v1/product", handler.HandlerWrapper(prodHandler.GetProduct))
+	server.RegisterHandler("/v1/order", handler.HandlerWrapper(orderHandler.AddOrder))
+	server.RegisterHandler("/v1/order/status/update", handler.HandlerWrapper(orderHandler.UpdateOrderStatus))
 	return server
 }
 
-func (h *HttpServer) Start(ctx context.Context) {
+func (h *HttpServer) Start(ctx context.Context) error {
 	h.logger.Printf("Server is listening on port:%d", h.port)
-	http.ListenAndServe(fmt.Sprintf(":%d", h.port), nil)
+	return http.ListenAndServe(fmt.Sprintf(":%d", h.port), nil)
 }
 
 func (h *HttpServer) RegisterHandler(path string, handler http.HandlerFunc) {
