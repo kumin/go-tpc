@@ -6,8 +6,8 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/kumin/go-tpc/services/customer_service/configs"
-	"github.com/kumin/go-tpc/services/customer_service/handler"
+	"github.com/kumin/go-tpc/services/credit_service/configs"
+	"github.com/kumin/go-tpc/services/credit_service/handler"
 )
 
 type HttpServer struct {
@@ -17,18 +17,14 @@ type HttpServer struct {
 
 func NewHttpServer(
 	configs *configs.ServerConfiguration,
-	prodHandler *handler.ProductCtlHandler,
-	orderHandler *handler.OrderCtlHandler,
+	walletHandler *handler.WalletCtlHandler,
 ) *HttpServer {
 	server := &HttpServer{
 		port:   configs.Port,
 		logger: log.Default(),
 	}
-	server.RegisterHandler("/v1/product/add", handler.HandlerWrapper(prodHandler.AddProduct))
-	server.RegisterHandler("/v1/product/listing", handler.HandlerWrapper(prodHandler.ListProducts))
-	server.RegisterHandler("/v1/product", handler.HandlerWrapper(prodHandler.GetProduct))
-	server.RegisterHandler("/v1/order", handler.HandlerWrapper(orderHandler.AddOrder))
-	server.RegisterHandler("/v1/order/status/update", handler.HandlerWrapper(orderHandler.UpdateOrderStatus))
+	server.RegisterHandler("/v1/wallet/add", handler.HandlerWrapper(walletHandler.AddWallet))
+	server.RegisterHandler("/v1/wallet/balance/update", handler.HandlerWrapper(walletHandler.UpdateWalletBalance))
 	return server
 }
 

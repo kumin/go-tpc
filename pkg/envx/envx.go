@@ -3,6 +3,7 @@ package envx
 import (
 	"os"
 	"strconv"
+	"strings"
 )
 
 func GetString(key string, defaultVal string) string {
@@ -12,6 +13,14 @@ func GetString(key string, defaultVal string) string {
 	}
 
 	return value
+}
+
+func GetArray(key string, defaultVal string) []string {
+	value := os.Getenv(key)
+	if value == "" {
+		value = defaultVal
+	}
+	return strings.Split(value, ",")
 }
 
 func GetInt(key string, defaultVal int) int {

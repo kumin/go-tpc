@@ -5,8 +5,8 @@ import (
 	"io"
 	"net/http"
 
-	"github.com/kumin/go-tpc/services/customer_service/entities"
-	"github.com/kumin/go-tpc/services/customer_service/repos"
+	"github.com/kumin/go-tpc/services/credit_service/entities"
+	"github.com/kumin/go-tpc/services/credit_service/repos"
 )
 
 type UpdateBody struct {
@@ -14,31 +14,31 @@ type UpdateBody struct {
 	Amount float64 `json:"amount,omitempty"`
 }
 
-type OrderService struct {
-	orderRepo repos.OrderRepo
+type WalletService struct {
+	walletRepo repos.WalletRepo
 }
 
-func NewOrderService(
-	orderRepo repos.OrderRepo,
-) *OrderService {
-	return &OrderService{
-		orderRepo: orderRepo,
+func NewWalletService(
+	walletRepo repos.WalletRepo,
+) *WalletService {
+	return &WalletService{
+		walletRepo: walletRepo,
 	}
 }
 
-func (o *OrderService) AddOrder(req *http.Request) (*entities.Order, error) {
+func (o *WalletService) AddWallet(req *http.Request) (*entities.Wallet, error) {
 	d, err := io.ReadAll(req.Body)
 	if err != nil {
 		return nil, err
 	}
-	var order entities.Order
-	if err := json.Unmarshal(d, &order); err != nil {
+	var wallet entities.Wallet
+	if err := json.Unmarshal(d, &wallet); err != nil {
 		return nil, err
 	}
-	return o.orderRepo.AddOrder(req.Context(), &order)
+	return o.walletRepo.AddWallet(req.Context(), &wallet)
 }
 
-func (o *OrderService) UpdateOrderStatus(req *http.Request) (*entities.Order, error) {
+func (o *WalletService) UpdateWalletBalance(req *http.Request) (*entities.Wallet, error) {
 	d, err := io.ReadAll(req.Body)
 	if err != nil {
 		return nil, err
@@ -47,9 +47,9 @@ func (o *OrderService) UpdateOrderStatus(req *http.Request) (*entities.Order, er
 	if err := json.Unmarshal(d, &updateBody); err != nil {
 		return nil, err
 	}
-	if updateBody.Id == 0 || updateBody.Status == 0 {
+	if updateBody.Id == 0 || updateBody.Amount == 0 {
 		return nil, entities.ParamInvalid
 	}
-	return o.orderRepo.UpdateOrderStatus(req.Context(),
-		updateBody.Id, entities.OrderStatus(updateBody.Status))
+	return o.walletRepo.UpdateWalletBalance(req.Context(),
+		updateBody.Id, updateBody.Amount)
 }

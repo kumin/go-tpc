@@ -8,12 +8,12 @@ package apps
 
 import (
 	"github.com/google/wire"
-	"github.com/kumin/go-tpc/services/customer_service/configs"
-	"github.com/kumin/go-tpc/services/customer_service/handler"
-	"github.com/kumin/go-tpc/services/customer_service/infras"
-	"github.com/kumin/go-tpc/services/customer_service/repos/mysql"
-	"github.com/kumin/go-tpc/services/customer_service/repos/provider"
-	"github.com/kumin/go-tpc/services/customer_service/services"
+	"github.com/kumin/go-tpc/services/credit_service/configs"
+	"github.com/kumin/go-tpc/services/credit_service/handler"
+	"github.com/kumin/go-tpc/services/credit_service/infras"
+	"github.com/kumin/go-tpc/services/credit_service/repos/mysql"
+	"github.com/kumin/go-tpc/services/credit_service/repos/provider"
+	"github.com/kumin/go-tpc/services/credit_service/services"
 )
 
 // Injectors from wire.go:
@@ -21,16 +21,13 @@ import (
 func BuildServer() (*HttpServer, error) {
 	serverConfiguration := configs.NewServerConfiguration()
 	mysqlConnector := infras.NewMysqlConnector()
-	productMysqlRepo := mysql.NewProductMysqlRepo(mysqlConnector)
-	productCtlServices := services.NewProductCtlServices(productMysqlRepo)
-	productCtlHandler := handler.NewProductCtlHandler(productCtlServices)
-	orderMysqlRepo := mysql.NewOrderMysqlRepo(mysqlConnector)
-	orderService := services.NewOrderService(orderMysqlRepo)
-	orderCtlHandler := handler.NewOrderCtlHandler(orderService)
-	httpServer := NewHttpServer(serverConfiguration, productCtlHandler, orderCtlHandler)
+	walletMysqlRepo := mysql.NewWalletMysqlRepo(mysqlConnector)
+	walletService := services.NewWalletService(walletMysqlRepo)
+	walletCtlHandler := handler.NewWalletCtlHandler(walletService)
+	httpServer := NewHttpServer(serverConfiguration, walletCtlHandler)
 	return httpServer, nil
 }
 
 // wire.go:
 
-var SuperGraphSet = wire.NewSet(provider.MysqlGraphSet, services.ServiceGraphSet, handler.HandlerGraphSet, ServerGraphSet)
+var SuperGraphSet = wire.NewSet(infras.InfaGraphSet, provider.MysqlGraphSet, services.ServiceGraphSet, handler.HandlerGraphSet, ServerGraphSet)

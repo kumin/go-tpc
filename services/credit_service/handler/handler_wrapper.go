@@ -10,14 +10,14 @@ import (
 type HandlerFn func(r *http.Request) (interface{}, error)
 
 // handle http error
-func HandlerWrapper(hf HandlerFn) http.HandlerFunc {
+func HandlerWrapper(hfn HandlerFn) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		obj, err := hf(r)
+		obj, err := hfn(r)
 		if err != nil {
-			switch err {
-			case entities.ParamInvalid:
+			switch err.Error() {
+			case entities.ParamInvalid.Error():
 				JSONError(w, err, http.StatusBadRequest)
-			case entities.MethodNotAllowErr:
+			case entities.MethodNotAllowErr.Error():
 				JSONError(w, err, http.StatusMethodNotAllowed)
 			default:
 				JSONError(w, err, http.StatusInternalServerError)

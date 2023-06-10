@@ -5,8 +5,8 @@ import (
 	"log"
 
 	"github.com/kumin/go-tpc/services/credit_service/entities"
+	"github.com/kumin/go-tpc/services/credit_service/infras"
 	"github.com/kumin/go-tpc/services/credit_service/repos"
-	"github.com/kumin/go-tpc/services/customer_service/infras"
 	"go.uber.org/zap"
 )
 
@@ -17,7 +17,7 @@ type WalletMysqlRepo struct {
 	logger *zap.Logger
 }
 
-func NewOrderMysqlRepo(
+func NewWalletMysqlRepo(
 	db *infras.MysqlConnector,
 ) *WalletMysqlRepo {
 	logger, err := zap.NewProduction()
@@ -55,7 +55,7 @@ func (o *WalletMysqlRepo) UpdateWalletBalance(
 	}
 
 	if wallet.Money < amount {
-		o.logger.Error(entities.InternalError.Error(), zap.Int("wallet id", id))
+		o.logger.Error(entities.ErrNotEnoughBalance.Error(), zap.Int("wallet id", id))
 		return nil, entities.ErrNotEnoughBalance
 	}
 	wallet.Money -= amount

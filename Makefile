@@ -2,7 +2,6 @@
 DATABASE_URL = $(MYSQL_ADDRS)
 PROJECT_DIR = $(shell pwd)
 APPS_DIR = $(PROJECT_DIR)/services
-BIN_DIR = $(PROJECT_DIR)/bin
 
 CMDS = $(shell find $(PROJECT_DIR)/services/*/cmd -mindepth 1 -maxdepth 1 -type d)
 STATIC_TARGETS = $(addprefix static-,$(CMDS))
@@ -25,6 +24,8 @@ di:
 
 static: $(STATIC_TARGETS)
 $(STATIC_TARGETS):
-	$(eval FULLPATH="$(subst static-,,$@)")
-	$(eval CMD=$(shell basename "${FULLPATH}"))
-	env GCO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o $(BIN_DIR)/$(CMD) $(FULLPATH)
+	$(eval FULLPATH=$(subst static-,,$@))
+	$(eval CMD=$(shell basename ${FULLPATH}))
+	$(eval TEMPATH=$(subst ${CMD},,${FULLPATH}))
+	$(eval OUT=$(shell dirname ${TEMPATH})) 
+	env GCO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o $(OUT)/out/$(CMD) $(FULLPATH)

@@ -7,7 +7,7 @@ import (
 	"sync"
 	"syscall"
 
-	apps "github.com/kumin/go-tpc/services/customer_service/apps/server-ctl"
+	apps "github.com/kumin/go-tpc/services/credit_service/apps/server-ctl"
 )
 
 func main() {
